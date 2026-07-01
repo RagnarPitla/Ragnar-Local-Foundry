@@ -1,0 +1,43 @@
+# Node / JavaScript
+node_modules/
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+dist/
+build/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Foundry Local / local artifacts
+*.onnx
+*.gguf
+models-cache/
+.foundry/
+
+# Environment and secrets
+.env
+.env.*
+*.local
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Logs and scratch
+*.log
+tmp/
+scratch/

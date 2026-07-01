@@ -1,0 +1,36 @@
+{
+  "_comment": "Canonical curated model catalog for Ragnar-Local-Foundry. The Foundry Local catalog is dynamic and hardware-aware; these aliases are representative starting points. ALWAYS verify what is actually available on your machine with `foundry model list`. Sizes and RAM are approximate for quantized on-device variants.",
+  "verify_command": "foundry model list",
+  "default_model": "qwen2.5-0.5b",
+  "profiles": {
+    "starter": {
+      "description": "Tiny, fast, low-RAM. Great first run on any Apple Silicon Mac (8 GB+).",
+      "models": ["qwen2.5-0.5b", "whisper-tiny"]
+    },
+    "balanced": {
+      "description": "Everyday assistant + coding + reasoning. Comfortable on 16 GB Macs.",
+      "models": ["phi-4-mini-instruct", "qwen2.5-coder-1.5b", "deepseek-r1-distill-qwen-1.5b"]
+    },
+    "power": {
+      "description": "Highest quality local models. Recommend 32 GB+ unified memory.",
+      "models": ["phi-4", "qwen2.5-7b", "deepseek-r1-distill-qwen-7b", "mistral-7b-v0.2"]
+    }
+  },
+  "models": [
+    { "alias": "qwen2.5-0.5b", "family": "Qwen", "task": "chat-completion", "params": "0.5B", "approx_size_gb": 0.7, "min_ram_gb": 8, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Fastest smoke test, quick chat, low-resource devices" },
+    { "alias": "qwen2.5-1.5b", "family": "Qwen", "task": "chat-completion", "params": "1.5B", "approx_size_gb": 1.2, "min_ram_gb": 8, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Light general chat with better quality than 0.5B" },
+    { "alias": "qwen2.5-7b", "family": "Qwen", "task": "chat-completion", "params": "7B", "approx_size_gb": 5.0, "min_ram_gb": 16, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Strong general-purpose assistant" },
+    { "alias": "qwen2.5-coder-1.5b", "family": "Qwen Coder", "task": "chat-completion", "params": "1.5B", "approx_size_gb": 1.2, "min_ram_gb": 8, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Fast local code completion and code chat" },
+    { "alias": "qwen2.5-coder-7b", "family": "Qwen Coder", "task": "chat-completion", "params": "7B", "approx_size_gb": 5.0, "min_ram_gb": 16, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "High-quality local coding assistant" },
+    { "alias": "phi-3.5-mini-instruct", "family": "Phi", "task": "chat-completion", "params": "3.8B", "approx_size_gb": 2.2, "min_ram_gb": 8, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Compact instruct model, good reasoning per byte" },
+    { "alias": "phi-4-mini-instruct", "family": "Phi", "task": "chat-completion", "params": "3.8B", "approx_size_gb": 2.5, "min_ram_gb": 8, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Balanced default assistant, strong instruction following" },
+    { "alias": "phi-4-mini-reasoning", "family": "Phi", "task": "chat-completion", "params": "3.8B", "approx_size_gb": 2.5, "min_ram_gb": 8, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Chain-of-thought style reasoning at small size" },
+    { "alias": "phi-4", "family": "Phi", "task": "chat-completion", "params": "14B", "approx_size_gb": 8.5, "min_ram_gb": 32, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Top-tier local reasoning and general quality" },
+    { "alias": "deepseek-r1-distill-qwen-1.5b", "family": "DeepSeek R1", "task": "chat-completion", "params": "1.5B", "approx_size_gb": 1.2, "min_ram_gb": 8, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Small reasoning-distilled model, good for math/logic" },
+    { "alias": "deepseek-r1-distill-qwen-7b", "family": "DeepSeek R1", "task": "chat-completion", "params": "7B", "approx_size_gb": 5.0, "min_ram_gb": 16, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Reasoning-focused mid-size model" },
+    { "alias": "deepseek-r1-distill-qwen-14b", "family": "DeepSeek R1", "task": "chat-completion", "params": "14B", "approx_size_gb": 9.5, "min_ram_gb": 32, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Largest local reasoning distill" },
+    { "alias": "mistral-7b-v0.2", "family": "Mistral", "task": "chat-completion", "params": "7B", "approx_size_gb": 4.5, "min_ram_gb": 16, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Fast, capable general chat and drafting" },
+    { "alias": "gpt-oss-20b", "family": "GPT-OSS", "task": "chat-completion", "params": "20B", "approx_size_gb": 12.5, "min_ram_gb": 32, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Large open-weight model for highest local quality" },
+    { "alias": "whisper-tiny", "family": "Whisper", "task": "audio-transcription", "params": "39M", "approx_size_gb": 0.15, "min_ram_gb": 8, "mac_execution": "CPU / WebGPU (Metal)", "use_case": "Local speech-to-text transcription" }
+  ]
+}

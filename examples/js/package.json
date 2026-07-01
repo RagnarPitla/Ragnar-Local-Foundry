@@ -1,0 +1,16 @@
+{
+  "name": "ragnar-local-foundry-examples",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "foundry-local-sdk": "^1.2.0",
+    "openai": "^4.0.0"
+  },
+  "scripts": {
+    "chat": "node chat.mjs",
+    "openai": "node openai-compat.mjs"
+  }
+}

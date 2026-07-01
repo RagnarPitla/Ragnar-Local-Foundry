@@ -1,0 +1,2 @@
+foundry-local-sdk>=1.2.0
+openai>=1.0.0
