@@ -13,6 +13,7 @@ Most Foundry Local issues fall into five buckets: service state, model catalog s
 | First `foundry model run` is slow | Model and execution providers may download on first use. | Wait for the first run to complete. Later runs use the cache. |
 | Low disk space | Cached models consume local storage. | Run `foundry cache location`, `foundry cache list`, then `foundry cache remove <model>`. |
 | Homebrew install problems | Homebrew, permissions, or tap state needs attention. | Confirm Homebrew works, then rerun `brew tap microsoft/foundrylocal` and `brew install foundrylocal`. |
+| `Refusing to load formula ... from untrusted tap` | Newer Homebrew gates third-party taps behind an explicit trust step. | Run `brew trust microsoft/foundrylocal`, then `brew install foundrylocal`. The repo installer does this automatically. |
 | Wrong Node version | JavaScript SDK requires Node.js 20+. | Install or select Node.js 20+, then rerun the JS example. |
 | Wrong Python version | Python SDK requires Python 3.11+. | Install or select Python 3.11+, then rerun the Python example. |
 | Cannot find REST endpoint | Local server uses a dynamic port. | Run `foundry service status` or `make serve`. |

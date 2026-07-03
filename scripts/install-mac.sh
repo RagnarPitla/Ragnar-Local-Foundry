@@ -82,6 +82,11 @@ if command -v foundry >/dev/null 2>&1 && [ "$FORCE" -eq 0 ]; then
 else
   info "Tapping microsoft/foundrylocal."
   brew tap microsoft/foundrylocal
+  # Newer Homebrew gates third-party taps behind an explicit trust step and
+  # refuses to load their formulae until trusted. Older Homebrew has no
+  # `brew trust` command, so tolerate its absence.
+  info "Trusting the microsoft/foundrylocal tap (required by newer Homebrew)."
+  brew trust microsoft/foundrylocal 2>/dev/null || info "brew trust is not required on this Homebrew version."
   if command -v foundry >/dev/null 2>&1 && [ "$FORCE" -eq 1 ]; then
     info "Reinstalling foundrylocal."
     brew reinstall foundrylocal || brew install foundrylocal
