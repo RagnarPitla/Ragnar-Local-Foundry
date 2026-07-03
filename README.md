@@ -86,7 +86,7 @@ Then talk to a model right away:
 
 ```bash
 make run                 # interactive chat with the default model (qwen2.5-0.5b)
-make run MODEL=phi-4-mini-instruct
+make run MODEL=phi-4-mini
 make chat                # builds and runs the JavaScript SDK sample
 ```
 
@@ -150,9 +150,9 @@ This repo groups a curated subset into three profiles in [config/models.json](co
 
 | Profile | Best for | Models | Suggested unified memory |
 | --- | --- | --- | --- |
-| `starter` | First run, low resource | `qwen2.5-0.5b`, `whisper-tiny` | 8 GB+ |
-| `balanced` | Daily assistant, coding, reasoning | `phi-4-mini-instruct`, `qwen2.5-coder-1.5b`, `deepseek-r1-distill-qwen-1.5b` | 16 GB+ |
-| `power` | Highest local quality | `phi-4`, `qwen2.5-7b`, `deepseek-r1-distill-qwen-7b`, `mistral-7b-v0.2` | 32 GB+ |
+| `starter` | First run, low resource | `qwen2.5-0.5b`, `qwen3-0.6b` | 8 GB+ |
+| `balanced` | Daily assistant, coding, reasoning | `phi-4-mini`, `qwen2.5-coder-1.5b`, `qwen3-4b` | 16 GB+ |
+| `power` | Highest local quality | `phi-4`, `qwen2.5-7b`, `deepseek-r1-7b`, `mistral-7b-v0.2` | 32 GB+ |
 
 Download a profile with `make models PROFILE=balanced` or `bash scripts/download-models.sh --profile balanced`. Full sizing and selection guidance: [docs/04-model-catalog.md](docs/04-model-catalog.md).
 
@@ -200,7 +200,7 @@ See [docs/06-sdk-guide.md](docs/06-sdk-guide.md) for the SDK walkthrough.
 ```bash
 foundry model list                       # list models for your hardware
 foundry model list --filter task=chat-completion
-foundry model download phi-4-mini-instruct
+foundry model download phi-4-mini
 foundry model run qwen2.5-0.5b           # interactive REPL
 foundry service status                   # is the service up, and on which endpoint
 foundry service restart                  # fix "Request to local service failed"

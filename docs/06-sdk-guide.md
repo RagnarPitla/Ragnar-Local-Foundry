@@ -65,6 +65,8 @@ for await (const chunk of chat.completeStreamingChat(messages)) {
 
 ## JavaScript audio transcription
 
+Foundry Local supports speech-to-text through Whisper audio models. Audio model availability depends on your platform and Foundry Local version, so confirm an audio alias is listed by `foundry model list` before using this path. If your catalog does not list a Whisper model yet, use the chat examples above.
+
 ```js
 const whisper = await manager.catalog.getModel('whisper-tiny');
 await whisper.download();

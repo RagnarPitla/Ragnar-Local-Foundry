@@ -34,7 +34,7 @@ Download models by curated profile or explicit aliases.
 Examples:
   download-models.sh
   download-models.sh --profile balanced
-  download-models.sh --yes qwen2.5-0.5b phi-4-mini-instruct
+  download-models.sh --yes qwen2.5-0.5b phi-4-mini
 
 If no profile or aliases are provided, the starter profile is used.
 USAGE

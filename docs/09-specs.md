@@ -85,9 +85,9 @@ Profiles come from [`../config/models.json`](../config/models.json):
 
 | Profile | Target Mac | Models |
 | --- | --- | --- |
-| `starter` | 8 GB+ | `qwen2.5-0.5b`, `whisper-tiny` |
-| `balanced` | 16 GB+ | `phi-4-mini-instruct`, `qwen2.5-coder-1.5b`, `deepseek-r1-distill-qwen-1.5b` |
-| `power` | 32 GB+ | `phi-4`, `qwen2.5-7b`, `deepseek-r1-distill-qwen-7b`, `mistral-7b-v0.2` |
+| `starter` | 8 GB+ | `qwen2.5-0.5b`, `qwen3-0.6b` |
+| `balanced` | 16 GB+ | `phi-4-mini`, `qwen2.5-coder-1.5b`, `qwen3-4b` |
+| `power` | 32 GB+ | `phi-4`, `qwen2.5-7b`, `deepseek-r1-7b`, `mistral-7b-v0.2` |
 
 Provision with:
 
