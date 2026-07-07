@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Foundry Local on Mac — Install, Start & Use Guide</title>
+<script>
+  (() => {
+    const stored = localStorage.getItem("scoutTheme");
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    // Default to light ("white") mode unless explicitly overridden.
+    const theme = param || stored || "light";
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --cp-bg: #f7f4ef;
+    --cp-bg-elevated: #fcfbf8;
+    --cp-surface: #ffffff;
+    --cp-surface-soft: #f5f5f5;
+    --cp-border: #dedede;
+    --cp-border-strong: #919191;
+    --cp-text: #242424;
+    --cp-text-muted: #5c5c5c;
+    --cp-text-soft: #6f6f6f;
+    --cp-accent: #b11f4b;
+    --cp-accent-hover: #9a1a41;
+    --cp-accent-soft: rgba(177, 31, 75, 0.08);
+    --cp-accent-fg: #ffffff;
+    --cp-success: #16a34a;
+    --cp-danger: #dc2626;
+    --cp-warning: #f59e0b;
+    --cp-link: #0078d4;
+    --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+    --cp-overlay: rgba(255, 255, 255, 0.8);
+    --cp-panel: rgba(255, 255, 255, 0.86);
+    --cp-panel-strong: rgba(255, 255, 255, 0.96);
+    --cp-sheen: rgba(255, 255, 255, 0.55);
+    --cp-highlight: rgba(177, 31, 75, 0.12);
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --cp-bg: #3d3b3a;
+    --cp-bg-elevated: #343231;
+    --cp-surface: #292929;
+    --cp-surface-soft: #2e2e2e;
+    --cp-border: #474747;
+    --cp-border-strong: #5f5f5f;
+    --cp-text: #dedede;
+    --cp-text-muted: #919191;
+    --cp-text-soft: #b0b0b0;
+    --cp-accent: #fd8ea1;
+    --cp-accent-hover: #fb7b91;
+    --cp-accent-soft: rgba(253, 142, 161, 0.14);
+    --cp-accent-fg: #1a1a1a;
+    --cp-success: #4ade80;
+    --cp-danger: #f87171;
+    --cp-warning: #fbbf24;
+    --cp-link: #4da6ff;
+    --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+    --cp-overlay: rgba(41, 41, 41, 0.88);
+    --cp-panel: rgba(41, 41, 41, 0.72);
+    --cp-panel-strong: rgba(41, 41, 41, 0.96);
+    --cp-sheen: rgba(255, 255, 255, 0.04);
+    --cp-highlight: rgba(253, 142, 161, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--cp-bg);
+    color: var(--cp-text);
+    font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  a { color: var(--cp-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, pre, kbd {
+    font-family: Consolas, "Courier New", Courier, monospace;
+  }
+
+  /* Top bar */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 22px;
+    background: var(--cp-panel-strong);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--cp-border);
+  }
+  .topbar .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .logo-dot {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: var(--cp-accent);
+    display: grid; place-items: center;
+    color: var(--cp-accent-fg);
+    font-size: 15px; font-weight: 800;
+    flex: 0 0 auto;
+  }
+  .topbar .spacer { flex: 1; }
+  .pill {
+    font-size: 12.5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--cp-border);
+    background: var(--cp-surface-soft);
+    color: var(--cp-text-muted);
+    white-space: nowrap;
+  }
+  .pill.ok { color: var(--cp-success); border-color: color-mix(in srgb, var(--cp-success) 40%, var(--cp-border)); }
+  .theme-btn {
+    cursor: pointer;
+    border: 1px solid var(--cp-border);
+    background: var(--cp-surface);
+    color: var(--cp-text);
+    border-radius: 0.625rem;
+    padding: 7px 12px;
+    font-size: 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .theme-btn:hover { border-color: var(--cp-border-strong); }
+
+  /* Layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 34px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 30px 22px 80px;
+  }
+  nav.toc {
+    position: sticky;
+    top: 74px;
+    align-self: start;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    font-size: 14.5px;
+  }
+  nav.toc .toc-title {
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    font-size: 11.5px;
+    color: var(--cp-text-soft);
+    margin: 0 0 10px 10px;
+    font-weight: 700;
+  }
+  nav.toc a {
+    display: block;
+    color: var(--cp-text-muted);
+    padding: 6px 10px;
+    border-radius: 8px;
+    border-left: 2px solid transparent;
+  }
+  nav.toc a:hover { background: var(--cp-surface-soft); text-decoration: none; color: var(--cp-text); }
+  nav.toc a.active {
+    color: var(--cp-accent);
+    border-left-color: var(--cp-accent);
+    background: var(--cp-accent-soft);
+    font-weight: 600;
+  }
+
+  main { min-width: 0; }
+
+  /* Hero */
+  .hero {
+    background:
+      radial-gradient(120% 140% at 100% 0%, var(--cp-accent-soft), transparent 60%),
+      var(--cp-bg-elevated);
+    border: 1px solid var(--cp-border);
+    border-radius: 16px;
+    padding: 30px 30px 26px;
+    box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+    margin-bottom: 30px;
+  }
+  .hero h1 {
+    margin: 6px 0 8px;
+    font-size: 30px;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+  }
+  .hero p.lede {
+    margin: 0 0 18px;
+    font-size: 16.5px;
+    color: var(--cp-text-muted);
+    max-width: 62ch;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cp-accent);
+  }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 13px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    color: var(--cp-text-muted);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+  .dot.green { background: var(--cp-success); }
+  .dot.amber { background: var(--cp-warning); }
+  .dot.rose { background: var(--cp-accent); }
+
+  /* Sections */
+  section { margin-bottom: 34px; scroll-margin-top: 84px; }
+  section h2 {
+    font-size: 22px;
+    margin: 0 0 6px;
+    display: flex; align-items: center; gap: 10px;
+    letter-spacing: -0.2px;
+  }
+  section h2 .num {
+    font-size: 13px;
+    color: var(--cp-accent-fg);
+    background: var(--cp-accent);
+    border-radius: 8px;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    flex: 0 0 auto;
+    font-weight: 800;
+  }
+  section > p { color: var(--cp-text-muted); }
+  h3 { font-size: 16.5px; margin: 22px 0 8px; }
+
+  .card {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+  }
+
+  /* Code blocks */
+  .code {
+    position: relative;
+    margin: 14px 0;
+    border: 1px solid var(--cp-border);
+    border-radius: 0.625rem;
+    background: var(--cp-bg-elevated);
+    overflow: hidden;
+  }
+  .code .code-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 12px;
+    background: var(--cp-surface-soft);
+    border-bottom: 1px solid var(--cp-border);
+    font-size: 12px;
+    color: var(--cp-text-soft);
+  }
+  .code pre {
+    margin: 0;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--cp-text);
+  }
+  .code pre .cmt { color: var(--cp-text-soft); }
+  .copy-btn {
+    cursor: pointer;
+    border: 1px solid var(--cp-border);
+    background: var(--cp-surface);
+    color: var(--cp-text-muted);
+    border-radius: 7px;
+    padding: 3px 9px;
+    font-size: 12px;
+    font-family: "Segoe UI", sans-serif;
+  }
+  .copy-btn:hover { color: var(--cp-accent); border-color: var(--cp-accent); }
+  .copy-btn.copied { color: var(--cp-success); border-color: var(--cp-success); }
+
+  code.inline {
+    background: var(--cp-surface-soft);
+    border: 1px solid var(--cp-border);
+    border-radius: 6px;
+    padding: 1px 6px;
+    font-size: 13px;
+    color: var(--cp-accent);
+  }
+
+  /* Callouts */
+  .callout {
+    border-radius: 0.625rem;
+    padding: 14px 16px 14px 16px;
+    margin: 16px 0;
+    border: 1px solid var(--cp-border);
+    border-left-width: 4px;
+    background: var(--cp-surface);
+    display: flex; gap: 12px;
+  }
+  .callout .ic { font-size: 18px; line-height: 1.4; flex: 0 0 auto; }
+  .callout .body { min-width: 0; }
+  .callout .body strong { display: block; margin-bottom: 2px; }
+  .callout p { margin: 4px 0 0; color: var(--cp-text-muted); font-size: 14.5px; }
+  .callout.info { border-left-color: var(--cp-link); }
+  .callout.warn { border-left-color: var(--cp-warning); }
+  .callout.ok { border-left-color: var(--cp-success); }
+  .callout.rose { border-left-color: var(--cp-accent); background: var(--cp-accent-soft); }
+
+  /* Steps */
+  ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+  ol.steps > li {
+    position: relative;
+    padding: 2px 0 18px 44px;
+    border-left: 2px solid var(--cp-border);
+    margin-left: 14px;
+  }
+  ol.steps > li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  ol.steps > li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: -15px; top: -2px;
+    width: 28px; height: 28px;
+    background: var(--cp-accent);
+    color: var(--cp-accent-fg);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: 700;
+  }
+  ol.steps > li .st-title { font-weight: 600; margin-bottom: 2px; }
+  ol.steps > li .st-desc { color: var(--cp-text-muted); font-size: 14.5px; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--cp-border); border-radius: 12px; margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--cp-border); vertical-align: top; }
+  thead th { background: var(--cp-surface-soft); color: var(--cp-text); font-weight: 600; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--cp-surface-soft); }
+  td code, th code { color: var(--cp-accent); }
+
+  .tag {
+    display: inline-block; font-size: 11.5px; font-weight: 700;
+    padding: 2px 8px; border-radius: 999px;
+    background: var(--cp-accent-soft); color: var(--cp-accent);
+    border: 1px solid color-mix(in srgb, var(--cp-accent) 30%, transparent);
+  }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  .byline {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+    margin: 4px 0 18px; font-size: 14.5px; color: var(--cp-text-muted);
+  }
+  .byline .rdot {
+    width: 24px; height: 24px; border-radius: 7px; background: var(--cp-accent);
+    color: var(--cp-accent-fg); display: grid; place-items: center;
+    font-weight: 800; font-size: 12.5px; flex: 0 0 auto;
+  }
+  .byline strong { color: var(--cp-text); }
+  .byline .sep { color: var(--cp-border-strong); }
+
+  footer {
+    max-width: 1180px; margin: 0 auto; padding: 26px 22px 60px;
+    color: var(--cp-text-soft); font-size: 13.5px;
+    border-top: 1px solid var(--cp-border);
+  }
+  footer a { color: var(--cp-link); }
+
+  .mobile-toc-toggle { display: none; }
+
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; gap: 18px; }
+    nav.toc { position: static; max-height: none; border: 1px solid var(--cp-border); border-radius: 12px; padding: 12px; background: var(--cp-surface); }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 25px; }
+    .topbar .hide-sm { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="logo-dot">F</span><span>Foundry Local <span class="hide-sm" style="color:var(--cp-text-soft);font-weight:500">· Mac guide</span></span></div>
+  <div class="spacer"></div>
+  <span class="pill hide-sm">by Ragnar Pitla · Rbuild.ai</span>
+  <span class="pill ok hide-sm">CLI v0.8.119 installed</span>
+  <button class="theme-btn" id="themeToggle" aria-label="Toggle theme"><span id="themeIcon">🌙</span><span class="hide-sm" id="themeLabel">Dark</span></button>
+</div>
+
+<div class="layout">
+  <nav class="toc" id="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#what">What is Foundry Local</a>
+    <a href="#docker">Do I need Docker?</a>
+    <a href="#quickstart">Quick start (TL;DR)</a>
+    <a href="#prereqs">1 · What to install</a>
+    <a href="#install">2 · Install Foundry Local</a>
+    <a href="#start">3 · Start & use it</a>
+    <a href="#models">4 · Pick a model</a>
+    <a href="#cli">5 · CLI cheat sheet</a>
+    <a href="#api">6 · OpenAI-compatible API</a>
+    <a href="#samples">7 · Sample apps</a>
+    <a href="#trouble">8 · Troubleshooting</a>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <span class="eyebrow">Private, offline, on-device AI</span>
+      <h1>Run Azure AI Foundry Local on your Mac</h1>
+      <p class="lede">A practical guide to what you install, how you start the service, and how you use it. Everything runs on your Apple Silicon device: no cloud, no per-token cost, no API keys, no data leaving the machine.</p>
+      <div class="byline">
+        <span class="rdot">R</span>
+        <span>By <strong>Ragnar Pitla</strong></span>
+        <span class="sep">·</span>
+        <a href="https://rbuild.ai" target="_blank" rel="noopener"><strong>Rbuild.ai</strong></a>
+        <span class="sep">·</span>
+        <a href="mailto:ragnar@rbuild.ai">ragnar@rbuild.ai</a>
+      </div>
+      <div class="badges">
+        <span class="badge"><span class="dot green"></span>Foundry Local 0.8.119 installed</span>
+        <span class="badge"><span class="dot green"></span>Homebrew 6.0.6</span>
+        <span class="badge"><span class="dot amber"></span>Service: start it once (below)</span>
+        <span class="badge"><span class="dot rose"></span>Apple Silicon · ONNX Runtime</span>
+      </div>
+    </div>
+
+    <section id="what">
+      <h2><span class="num">i</span>What is Foundry Local</h2>
+      <div class="card">
+        <p style="margin-top:0">Foundry Local is Microsoft's end-to-end on-device AI runtime. It ships a lightweight (~20&nbsp;MB) runtime built on <a href="https://onnxruntime.ai/" target="_blank" rel="noopener">ONNX Runtime</a>, a curated catalog of quantized models, native SDKs (C#, JavaScript, Python, Rust), and automatic hardware acceleration.</p>
+        <div class="grid3" style="margin-top:14px">
+          <div><strong>🔒 Private</strong><p style="color:var(--cp-text-muted);font-size:14px;margin:4px 0 0">Prompts and outputs stay on the device.</p></div>
+          <div><strong>✈️ Offline</strong><p style="color:var(--cp-text-muted);font-size:14px;margin:4px 0 0">Works with no connectivity after the first model download.</p></div>
+          <div><strong>💸 No token cost</strong><p style="color:var(--cp-text-muted);font-size:14px;margin:4px 0 0">No cloud inference charges, no backend to maintain.</p></div>
+        </div>
+        <p style="margin-bottom:0">On Apple Silicon it accelerates inference with the WebGPU execution provider (Dawn targeting Metal) and falls back to CPU (MLAS). There is no CUDA or NPU path on Mac.</p>
+      </div>
+    </section>
+
+    <section id="docker">
+      <h2><span class="num">?</span>Do I need Docker?</h2>
+      <div class="callout rose">
+        <span class="ic">🐳</span>
+        <div class="body">
+          <strong>No. Docker is not required for Foundry Local on Mac.</strong>
+          <p>Foundry Local runs models directly on ONNX Runtime, not in containers. The <code class="inline">Ragnar-Local-Foundry</code> repo has zero Docker references, and the prerequisites are just Homebrew + Xcode Command Line Tools. Docker Desktop can stay installed on your Mac, but you can safely ignore it here. You would only reach for Docker later if you wanted to add a browser chat UI such as Open WebUI on top of the local API.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="quickstart">
+      <h2><span class="num">▶</span>Quick start (TL;DR)</h2>
+      <p>Foundry Local is already installed on this machine, so you are three commands away from chatting with a local model.</p>
+      <div class="code" data-copy>
+        <div class="code-head"><span>Terminal · fastest path</span><button class="copy-btn">Copy</button></div>
+<pre><span class="cmt"># 1. Start the local model service</span>
+foundry service start
+
+<span class="cmt"># 2. Download + run a tiny starter model (downloads on first use)</span>
+foundry model run qwen2.5-0.5b
+
+<span class="cmt"># 3. Type a prompt at the interactive REPL, then /exit to quit</span></pre>
+      </div>
+      <div class="callout ok">
+        <span class="ic">✅</span>
+        <div class="body">
+          <strong>Prefer the repo automation?</strong>
+          <p>From the repo root you can run <code class="inline">make demo</code> to install, pull the starter profile, serve, and health-check end to end. Run <code class="inline">make help</code> to see every target.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="prereqs">
+      <h2><span class="num">1</span>What to install</h2>
+      <p>A short, honest prerequisites list. The first three are required; the last two are only for running the code samples.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Requirement</th><th>Why</th><th>Install</th></tr></thead>
+          <tbody>
+            <tr><td><strong>macOS on Apple Silicon</strong> <span class="tag">required</span></td><td>M1 or later. The WebGPU/Metal acceleration path is Apple Silicon only.</td><td>—</td></tr>
+            <tr><td><strong>Homebrew</strong> <span class="tag">required</span></td><td>Installs the Foundry Local runtime + CLI.</td><td><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></td></tr>
+            <tr><td><strong>Xcode Command Line Tools</strong> <span class="tag">required</span></td><td>Compiler + git toolchain used by installs.</td><td><code>xcode-select --install</code></td></tr>
+            <tr><td><strong>Node.js 20+</strong> <span class="tag" style="background:var(--cp-surface-soft);color:var(--cp-text-muted);border-color:var(--cp-border)">optional</span></td><td>Only for the JavaScript SDK samples.</td><td><code>brew install node</code></td></tr>
+            <tr><td><strong>Python 3.11+</strong> <span class="tag" style="background:var(--cp-surface-soft);color:var(--cp-text-muted);border-color:var(--cp-border)">optional</span></td><td>Only for the Python SDK sample.</td><td><code>brew install python</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout info">
+        <span class="ic">💾</span>
+        <div class="body">
+          <strong>Also budget disk space for models.</strong>
+          <p>Quantized models range from a few hundred MB (starter) to several GB (power). See the model profiles below.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <h2><span class="num">2</span>Install Foundry Local</h2>
+
+      <h3>Option A — repo automation (recommended)</h3>
+      <div class="code" data-copy>
+        <div class="code-head"><span>Terminal · from the repo root</span><button class="copy-btn">Copy</button></div>
+<pre>make install      <span class="cmt"># installs Foundry Local via Homebrew and starts the service</span>
+make models       <span class="cmt"># downloads the "starter" profile (or PROFILE=balanced / power)</span>
+make demo         <span class="cmt"># install + pull starter + serve + health check, end to end</span></pre>
+      </div>
+
+      <h3>Option B — manual install</h3>
+      <div class="code" data-copy>
+        <div class="code-head"><span>Terminal</span><button class="copy-btn">Copy</button></div>
+<pre><span class="cmt"># 1. Add the Microsoft tap and install the runtime + CLI</span>
+brew tap microsoft/foundrylocal
+brew trust microsoft/foundrylocal
+brew install foundrylocal
+foundry --version
+
+<span class="cmt"># 2. See what your hardware can run (downloads execution providers on first run)</span>
+foundry model list
+
+<span class="cmt"># 3. Run a model interactively (downloads on first use)</span>
+foundry model run qwen2.5-0.5b</pre>
+      </div>
+
+      <div class="callout warn">
+        <span class="ic">⚠️</span>
+        <div class="body">
+          <strong>Homebrew 6.x gotcha: "Refusing to load formula from untrusted tap".</strong>
+          <p>Newer Homebrew gates third-party taps behind an explicit trust step. If <code class="inline">brew install foundrylocal</code> is refused, run <code class="inline">brew trust microsoft/foundrylocal</code> first, then reinstall. The repo installer (<code class="inline">scripts/install-mac.sh</code>) does this automatically.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="start">
+      <h2><span class="num">3</span>Start the service & use it</h2>
+      <p>Foundry Local runs a small background service that manages models and exposes a local endpoint. Start it once, then talk to a model.</p>
+      <ol class="steps">
+        <li>
+          <div class="st-title">Start the service</div>
+          <div class="st-desc">Run <code class="inline">foundry service start</code>. First launch may download execution providers, so give it a minute.</div>
+        </li>
+        <li>
+          <div class="st-title">Confirm it is healthy</div>
+          <div class="st-desc"><code class="inline">foundry service status</code> should show a green running state and the dynamic endpoint it is listening on.</div>
+        </li>
+        <li>
+          <div class="st-title">Run a model</div>
+          <div class="st-desc"><code class="inline">foundry model run qwen2.5-0.5b</code> opens an interactive REPL. The model downloads on first use, then is cached for offline runs.</div>
+        </li>
+        <li>
+          <div class="st-title">Chat, then exit</div>
+          <div class="st-desc">Type prompts at the prompt. Use <code class="inline">/exit</code> (or Ctrl+C) to leave the REPL. The service keeps running in the background.</div>
+        </li>
+      </ol>
+      <div class="code" data-copy>
+        <div class="code-head"><span>Terminal · service lifecycle</span><button class="copy-btn">Copy</button></div>
+<pre>foundry service start        <span class="cmt"># start it</span>
+foundry service status       <span class="cmt"># is it up, and on which endpoint</span>
+foundry service restart      <span class="cmt"># fixes "Request to local service failed"</span>
+foundry service stop         <span class="cmt"># stop when you are done</span></pre>
+      </div>
+      <div class="callout ok">
+        <span class="ic">🩺</span>
+        <div class="body">
+          <strong>One-shot sanity check.</strong>
+          <p>From the repo root, <code class="inline">make health</code> verifies version, service status, catalog access, cache access, and endpoint discovery in a single pass.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="models">
+      <h2><span class="num">4</span>Pick a model</h2>
+      <p>The catalog is dynamic and hardware-aware, so the authoritative list for your machine is always <code class="inline">foundry model list</code>. This repo groups a curated subset into three profiles:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Profile</th><th>Best for</th><th>Models</th><th>Suggested memory</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag">starter</span></td><td>First run, low resource</td><td><code>qwen2.5-0.5b</code>, <code>qwen3-0.6b</code></td><td>8 GB+</td></tr>
+            <tr><td><span class="tag">balanced</span></td><td>Daily assistant, coding, reasoning</td><td><code>phi-4-mini</code>, <code>qwen2.5-coder-1.5b</code>, <code>qwen3-4b</code></td><td>16 GB+</td></tr>
+            <tr><td><span class="tag">power</span></td><td>Highest local quality</td><td><code>phi-4</code>, <code>qwen2.5-7b</code>, <code>deepseek-r1-7b</code>, <code>mistral-7b-v0.2</code></td><td>32 GB+</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="code" data-copy>
+        <div class="code-head"><span>Terminal · download a profile</span><button class="copy-btn">Copy</button></div>
+<pre>make models PROFILE=balanced
+<span class="cmt"># or directly:</span>
+bash scripts/download-models.sh --profile balanced --yes</pre>
+      </div>
+    </section>
+
+    <section id="cli">
+      <h2><span class="num">5</span>CLI cheat sheet</h2>
+      <div class="code" data-copy>
+        <div class="code-head"><span>foundry · most-used commands</span><button class="copy-btn">Copy</button></div>
+<pre>foundry model list                       <span class="cmt"># list models for your hardware</span>
+foundry model list --filter task=chat-completion
+foundry model list --filter alias=qwen*
+foundry model info qwen2.5-0.5b          <span class="cmt"># details (add --license for terms)</span>
+foundry model download phi-4-mini
+foundry model run qwen2.5-0.5b           <span class="cmt"># interactive REPL</span>
+
+foundry service status                   <span class="cmt"># up? which endpoint?</span>
+foundry service restart                  <span class="cmt"># fix a stuck service</span>
+foundry service ps                       <span class="cmt"># running model processes</span>
+foundry service diag                     <span class="cmt"># diagnostics</span>
+
+foundry cache list                       <span class="cmt"># what is cached locally</span>
+foundry cache location                   <span class="cmt"># where models are stored</span>
+foundry cache remove &lt;model&gt;             <span class="cmt"># free disk space</span></pre>
+      </div>
+    </section>
+
+    <section id="api">
+      <h2><span class="num">6</span>Use the OpenAI-compatible API</h2>
+      <p>Foundry Local exposes an OpenAI-compatible server on a local, dynamic port. Start it, discover the endpoint, then point any OpenAI client at <code class="inline">$ENDPOINT/v1</code> with a placeholder API key.</p>
+      <div class="code" data-copy>
+        <div class="code-head"><span>Terminal · serve + discover endpoint</span><button class="copy-btn">Copy</button></div>
+<pre>make serve                   <span class="cmt"># or: bash scripts/serve.sh</span>
+foundry service status       <span class="cmt"># prints the dynamic endpoint</span></pre>
+      </div>
+      <div class="code" data-copy>
+        <div class="code-head"><span>Terminal · call it with curl</span><button class="copy-btn">Copy</button></div>
+<pre>curl "$ENDPOINT/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"qwen2.5-0.5b","messages":[{"role":"user","content":"Hello"}]}'</pre>
+      </div>
+      <div class="callout info">
+        <span class="ic">🔑</span>
+        <div class="body">
+          <strong>The API key is a placeholder.</strong>
+          <p>Local auth does not use a real key, but OpenAI SDKs require a value. Pass something like <code class="inline">local-placeholder</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="samples">
+      <h2><span class="num">7</span>Run the sample apps</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3 style="margin-top:0">JavaScript (Node 20+)</h3>
+          <div class="code" data-copy>
+            <div class="code-head"><span>examples/js</span><button class="copy-btn">Copy</button></div>
+<pre>cd examples/js
+npm install
+npm run chat -- qwen2.5-0.5b \
+  "Explain unified memory on Apple Silicon"</pre>
+          </div>
+          <p style="font-size:13.5px;color:var(--cp-text-muted);margin-bottom:0">Or via Make: <code class="inline">make chat</code> / <code class="inline">make chat-openai</code>.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Python (3.11+)</h3>
+          <div class="code" data-copy>
+            <div class="code-head"><span>examples/python</span><button class="copy-btn">Copy</button></div>
+<pre>cd examples/python
+python3 -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -r requirements.txt
+python3 chat.py qwen2.5-0.5b \
+  "Explain unified memory on Apple Silicon"</pre>
+          </div>
+          <p style="font-size:13.5px;color:var(--cp-text-muted);margin-bottom:0">Or via Make: <code class="inline">make py-chat</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="trouble">
+      <h2><span class="num">8</span>Troubleshooting</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td><code>Request to local service failed</code></td><td>Service stopped or unhealthy.</td><td><code>foundry service restart</code>, then <code>foundry service status</code>.</td></tr>
+            <tr><td><code>Model not found</code></td><td>Alias not available on this machine.</td><td><code>foundry model list</code> and choose an available alias.</td></tr>
+            <tr><td>First <code>model run</code> is slow</td><td>Model + execution providers download on first use.</td><td>Wait for the first run; later runs use the cache.</td></tr>
+            <tr><td>Low disk space</td><td>Cached models consume storage.</td><td><code>foundry cache list</code> then <code>foundry cache remove &lt;model&gt;</code>.</td></tr>
+            <tr><td><code>Refusing to load formula ... untrusted tap</code></td><td>Homebrew gates third-party taps.</td><td><code>brew trust microsoft/foundrylocal</code>, then reinstall.</td></tr>
+            <tr><td>Cannot find REST endpoint</td><td>Local server uses a dynamic port.</td><td><code>foundry service status</code> or <code>make serve</code>.</td></tr>
+            <tr><td>OpenAI SDK asks for an API key</td><td>SDK requires a value even locally.</td><td>Use a placeholder such as <code>local-placeholder</code>.</td></tr>
+            <tr><td>Slow responses on large models</td><td>Model size / memory pressure / CPU fallback.</td><td>Use a smaller alias or a lower profile.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <p><strong>Ragnar-Local-Foundry</strong> — a research-backed blueprint + automation kit for running Azure AI Foundry Local on Apple Silicon.</p>
+  <p style="margin:8px 0 0"><span style="display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--cp-accent);color:var(--cp-accent-fg);font-weight:800;font-size:11px;vertical-align:middle;margin-right:6px">R</span><strong>By Ragnar Pitla · Rbuild.ai</strong> · <a href="mailto:ragnar@rbuild.ai">ragnar@rbuild.ai</a> · <a href="https://rbuild.ai" target="_blank" rel="noopener">rbuild.ai</a>. Views are the author's own and do not represent Microsoft's official position.</p>
+  <p>Official docs: <a href="https://learn.microsoft.com/en-us/azure/foundry-local/" target="_blank" rel="noopener">Foundry Local documentation</a> · <a href="https://learn.microsoft.com/en-us/azure/foundry-local/get-started" target="_blank" rel="noopener">Get started</a></p>
+</footer>
+
+<script>
+  // Theme toggle with persistence
+  const root = document.documentElement;
+  const btn = document.getElementById("themeToggle");
+  const icon = document.getElementById("themeIcon");
+  const label = document.getElementById("themeLabel");
+  function syncThemeButton() {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    icon.textContent = isDark ? "☀️" : "🌙";
+    label.textContent = isDark ? "Light" : "Dark";
+  }
+  syncThemeButton();
+  btn.addEventListener("click", () => {
+    const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    localStorage.setItem("scoutTheme", next);
+    syncThemeButton();
+  });
+
+  // Copy buttons
+  document.querySelectorAll(".code[data-copy]").forEach((block) => {
+    const btn = block.querySelector(".copy-btn");
+    const pre = block.querySelector("pre");
+    if (!btn || !pre) return;
+    btn.addEventListener("click", async () => {
+      const text = pre.innerText.replace(/\u00a0/g, " ");
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = "Copied";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1600);
+      } catch (e) {
+        btn.textContent = "Press ⌘C";
+      }
+    });
+  });
+
+  // Scroll-spy for the TOC
+  const links = Array.from(document.querySelectorAll("nav.toc a"));
+  const sections = links
+    .map((a) => document.querySelector(a.getAttribute("href")))
+    .filter(Boolean);
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = "#" + entry.target.id;
+        links.forEach((l) => l.classList.toggle("active", l.getAttribute("href") === id));
+      }
+    });
+  }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
+  sections.forEach((s) => spy.observe(s));
+</script>
+</body>
+</html>
